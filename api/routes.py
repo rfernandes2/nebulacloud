@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, jsonify
 from models import db, User
 
 # Create a blueprint for your routes
@@ -7,14 +7,10 @@ main = Blueprint('main', __name__)
 # Define your routes here
 @main.route("/")  # Home route
 def home():
-    return "Welcome to your Flask app!"
+    return 'Method not allowed', 405
 
-@main.route("/about")  # About route
-def about():
-    return "This is the About page!"
-
-# Route to fetch all users
-@main.route("/users")
-def get_users():
-    users = User.query.all()  # Query all users from the database
-    return {"users": [{"id": u.id, "username": u.username} for u in users]}
+# List users
+@main.route("/users", methods=["GET"])
+def list_users():
+    users = User.query.all()
+    return jsonify({"users": [{"id": user.id, "username": user.username} for user in users]}), 200
