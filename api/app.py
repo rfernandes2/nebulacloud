@@ -1,20 +1,19 @@
 from flask import Flask
-from models import db, User  # Import the db and User model
+from routes import main  # Import the blueprint
+from settings import sql_url, sql_track_mod
 
-# Initialize Flask app
 app = Flask(__name__)
 
-# Configure SQLite database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# Register the blueprint
+app.register_blueprint(main)
 
-# Initialize the database
+# Configure your app's database or other settings
+app.config['SQLALCHEMY_DATABASE_URI'] = sql_url
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = sql_track_mod
+
+# Initialize the app with the db
+from models import db
 db.init_app(app)
-
-# Create tables (run once)
-with app.app_context():
-    db.create_all()
-    print("Database and tables created successfully!")
 
 if __name__ == "__main__":
     app.run(debug=True)
