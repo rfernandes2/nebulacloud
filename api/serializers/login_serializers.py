@@ -1,6 +1,6 @@
 from flask_jwt_extended import create_access_token
 from datetime import timedelta
-from ..models import User
+from api.models import User
 
 class LoginSerializer:
     def __init__(self, username, password):
@@ -9,7 +9,7 @@ class LoginSerializer:
 
     def authenticate_user(self):
         user = User.query.filter_by(username=self.username).first()
-        if user and user.check_password(self.password):
+        if user and user.password == self.password:
             return user
         return None
 

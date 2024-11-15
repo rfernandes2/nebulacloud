@@ -1,6 +1,5 @@
 from app import app
-from models import db, User
-
+from api.models import db, User
 
 with app.app_context():
     username = input('Enter username: ')
