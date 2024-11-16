@@ -62,7 +62,7 @@ class ListSerializers:
             return jsonify(error), 400
 
         self.user_dir = f"{default_path}{self.current_user}/{self.path}"
-        new_path = f"{self.user_dir}{folder_name}"
+        new_path = f"{self.user_dir}/{folder_name}"
 
         if not os.path.exists(new_path):
             os.makedirs(new_path)
