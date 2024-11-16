@@ -47,6 +47,23 @@ def list_dir():
     list_serializer = ListSerializers(current_user, path)
     return list_serializer.list()
 
+@main.route("/create_folder", methods=["POST"])
+@jwt_required()
+def create_folder():
+    current_user = get_jwt_identity()
+    data = request.get_json()
+
+    if data and 'path' in data:
+        if 'folder_name' in data:
+            path = data['path']
+            folder_name = data['folder_name']
+            list_serializer = ListSerializers(current_user, path)
+            return list_serializer.create_folder(folder_name)
+        else:
+            return jsonify({"error": "Missing folder name"}), 400
+    else:
+        return jsonify({"error": "Missing path"}), 400
+
 # Route to fetch all users
 @main.route("/users")
 @jwt_required()

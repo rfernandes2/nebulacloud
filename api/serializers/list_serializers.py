@@ -53,3 +53,17 @@ class ListSerializers:
 
         except Exception as e:
             return jsonify({"error": str(e)}), 500
+
+    def create_folder(self, folder_name):
+        error, is_valid = self.validate_path()
+        if not is_valid:
+            return jsonify(error), 400
+
+        self.user_dir = f"{default_path}{self.current_user}/{self.path}"
+        new_path = f"{self.user_dir}{folder_name}"
+
+        if not os.path.exists(new_path):
+            os.makedirs(new_path)
+            return jsonify({"message": f"Success: Folder created at {new_path}"}), 201
+        else:
+            return jsonify({"error": "Folder already exists"}), 400
