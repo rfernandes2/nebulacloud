@@ -9,24 +9,27 @@ class ListSerializers:
         self.user_dir = ''
 
     def list(self):
-        if self.validate_path():
-            return self.get_folder_list()
-        else:
-            return jsonify({'error'}), 400
+        error, is_valid = self.validate_path()
+        if not is_valid:
+            return jsonify(error), 400
+
+        return self.get_folder_list()
 
     def validate_path(self):
-        if self.path == '':
+        # If no path is provided, use the default user directory
+        if not self.path:
             self.user_dir = f"{default_path}{self.current_user}"
         else:
+            # Validate path using regex
             if re.match(path_regex, self.path):
                 self.user_dir = f"{default_path}{self.current_user}/{self.path}"
             else:
-                #return jsonify({"error": "Invalid path. Only alphabetic characters are allowed."}), 400
-                return False
+                return {"error": "Invalid path. Only alphanumeric, underscores, and slashes are allowed."}, False
+
+        # Check if the directory exists
         if not os.path.exists(self.user_dir):
-            #return jsonify({"error": f"User directory does not exist: {self.user_dir}"}), 404
-            return False
-        return True
+            return {"error": f"User directory does not exist: {self.user_dir}"}, False
+        return {}, True
 
     def get_folder_list(self):
         try:

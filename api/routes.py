@@ -39,12 +39,12 @@ def verify_token():
 @jwt_required()
 def list_dir():
     current_user = get_jwt_identity()
-    data = request.get_json(silent=True)
+    data = request.get_json(silent=True) or {}
 
-    if not data:
-        data = None
+    # If no `path` is provided, default to None
+    path = data.get('path', None)
 
-    list_serializer = ListSerializers(current_user, data['path'])
+    list_serializer = ListSerializers(current_user, path)
     return list_serializer.list()
 
 # Route to fetch all users
