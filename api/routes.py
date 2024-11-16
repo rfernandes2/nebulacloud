@@ -3,8 +3,7 @@ from api.models import db, User
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from api.serializers.login_serializers import LoginSerializer
 from api.serializers.verify_token_serializer import VerifyTokenSerializer
-from api.settings import default_path
-import os
+from api.serializers.list_serializers import ListSerializers
 
 # Create a blueprint for your routes
 main = Blueprint('main', __name__)
@@ -40,40 +39,13 @@ def verify_token():
 @jwt_required()
 def list_dir():
     current_user = get_jwt_identity()
-    user_dir = f"{default_path}{current_user}"
+    data = request.get_json(silent=True)
 
-    if not os.path.exists(user_dir):
-        return jsonify({"error": "User directory does not exist"}), 404
+    if not data:
+        data = None
 
-    try:
-        folders = {}
-
-        for folder_name in os.listdir(user_dir):
-            folder_path = os.path.join(user_dir, folder_name)
-
-            if os.path.isdir(folder_path):  # If it's a directory
-                # List files and subfolders within the directory
-                subfiles = []
-                subfolders = []
-                for subfolder_name in os.listdir(folder_path):
-                    subfolder_path = os.path.join(folder_path, subfolder_name)
-                    if os.path.isdir(subfolder_path):
-                        subfolders.append(subfolder_name)
-                    elif os.path.isfile(subfolder_path):
-                        subfiles.append(subfolder_name)
-
-                # Add the folder's contents to the dictionary
-                folders[folder_name] = {
-                    "files": subfiles,
-                    "folders": subfolders
-                }
-
-        return jsonify({
-            "folders": folders
-        })
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    list_serializer = ListSerializers(current_user, data['path'])
+    return list_serializer.list()
 
 # Route to fetch all users
 @main.route("/users")
