@@ -64,6 +64,19 @@ def create_folder():
     else:
         return jsonify({"error": "Missing path"}), 400
 
+@main.route("/delete", methods=["DELETE"])
+@jwt_required()
+def delete_item():
+    current_user = get_jwt_identity()
+    data = request.get_json()
+
+    if data and 'path' in data:
+        path = data['path']
+        list_serializer = ListSerializers(current_user, path)
+        return list_serializer.delete_item()
+    else:
+        return jsonify({"error": "Missing 'path' in request data"}), 400
+
 # Route to fetch all users
 @main.route("/users")
 @jwt_required()

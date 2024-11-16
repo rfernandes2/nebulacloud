@@ -1,6 +1,8 @@
 from api.settings import default_path, path_regex
-import os, re
+import os, re, shutil
 from flask import jsonify
+
+# Shutil - copying, moving, deleting, and archiving files and directories
 
 class ListSerializers:
     def __init__(self, current_user, path):
@@ -67,3 +69,24 @@ class ListSerializers:
             return jsonify({"message": f"Success: Folder created at {new_path}"}), 201
         else:
             return jsonify({"error": "Folder already exists"}), 400
+
+    def delete_item(self):
+        error, is_valid = self.validate_path()
+        if not is_valid:
+            return jsonify(error), 400
+
+        target_path = f"{default_path}{self.current_user}/{self.path}" or ""
+
+        try:
+            if os.path.isfile(target_path):
+                os.remove(target_path)  # Delete file
+                return jsonify({"message": f"File '{self.path}' deleted successfully."}), 200
+            elif os.path.isdir(target_path):
+                shutil.rmtree(target_path)  # Delete folder and its contents
+                return jsonify({"message": f"Folder '{self.path}' deleted successfully."}), 200
+            else:
+                return jsonify({"error": "The specified path does not exist."}), 404
+        except PermissionError:
+            return jsonify({"error": "Permission denied. Unable to delete."}), 403
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
