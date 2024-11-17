@@ -1,5 +1,6 @@
 from app import app
 from api.models import db, User
+import bcrypt
 
 with app.app_context():
     username = input('Enter username: ')
@@ -10,7 +11,10 @@ with app.app_context():
     if existing_user:
         print(f"ERROR: User {username} already exists!")
     else:
-        new_user = User(username=username, password=password, path = username)
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+        # Create a new user instance with the hashed password
+        new_user = User(username=username, password=hashed_password.decode('utf-8'), path=username)
         db.session.add(new_user)
         db.session.commit()
 
