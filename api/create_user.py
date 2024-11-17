@@ -1,5 +1,7 @@
 from app import app
 from api.models import db, User
+from api.settings import default_path
+import os
 
 with app.app_context():
     username = input('Enter username: ')
@@ -15,3 +17,7 @@ with app.app_context():
         db.session.commit()
 
         print(f"SUCCESS: User {username} created successfully!")
+
+    path = f"{default_path}{username}"
+    if not os.path.exists(path):
+        os.makedirs(path)
