@@ -23,6 +23,6 @@ class LoginSerializer:
         user = self.authenticate_user()
         if user:
             access_token = self.generate_token()
-            return {"access_token": access_token}, 200
+            return {"state": "Success", "access_token": access_token}, 200
         else:
-            return {"msg": "Invalid username or password"}, 401
+            return {"state":"Failed", "msg": "Invalid username or password"}, 401

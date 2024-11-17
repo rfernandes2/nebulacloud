@@ -1,10 +1,12 @@
 from flask import Flask
+from flask_cors import CORS  # Correct import here
 from flask_jwt_extended import JWTManager
 from api.routes import main  # Import the blueprint
 from api.settings import sql_url, sql_track_mod, jwt_key
 from api.models import db  # Ensure you import `db` only once from models
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for the Flask app
 
 # Register the blueprint
 app.register_blueprint(main)
