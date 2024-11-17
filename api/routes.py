@@ -28,7 +28,7 @@ def register():
     db.session.add(new_user)
     db.session.commit()
 
-    return jsonify({"success": f"User {username} created successfully!, {password},{hashed_password}"}), 201
+    return jsonify({"success": f"User {username} created successfully!"}), 201
 
 @main.route('/login', methods=['POST'])
 def login():
