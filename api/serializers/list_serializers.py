@@ -26,7 +26,7 @@ class ListSerializers:
             if re.match(path_regex, self.path):
                 self.user_dir = f"{default_path}{self.current_user}/{self.path}"
             else:
-                return {"error": "Invalid path. Only alphanumeric, underscores, and slashes are allowed."}, False
+                return {"error": f"Invalid path. Only alphanumeric, underscores, and slashes are allowed."}, False
 
         # Check if the directory exists
         if not os.path.exists(self.user_dir):
@@ -61,7 +61,11 @@ class ListSerializers:
         if not is_valid:
             return jsonify(error), 400
 
-        self.user_dir = f"{default_path}{self.current_user}/{self.path}"
+        if self.path != "":
+            self.user_dir = f"{default_path}{self.current_user}/{self.path}"
+        else:
+            self.user_dir = f"{default_path}{self.current_user}"
+
         new_path = f"{self.user_dir}/{folder_name}"
 
         if not os.path.exists(new_path):
