@@ -1,3 +1,4 @@
+import bcrypt
 from flask_jwt_extended import create_access_token
 from datetime import timedelta
 from api.models import User
@@ -9,7 +10,8 @@ class LoginSerializer:
 
     def authenticate_user(self):
         user = User.query.filter_by(username=self.username).first()
-        if user and user.password == self.password:
+        # Check if user exists and the provided password matches the stored hashed password
+        if user and bcrypt.checkpw(self.password.encode('utf-8'), user.password.encode('utf-8')):
             return user
         return None
 

@@ -4,6 +4,7 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 from api.serializers.login_serializers import LoginSerializer
 from api.serializers.verify_token_serializer import VerifyTokenSerializer
 from api.serializers.list_serializers import ListSerializers
+import bcrypt
 
 # Create a blueprint for your routes
 main = Blueprint('main', __name__)
@@ -13,6 +14,21 @@ main = Blueprint('main', __name__)
 def home():
     return "Method not auth", 405
 
+@main.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    if User.query.filter_by(username=username).first():
+        return jsonify({"error": "User already exists"}), 400
+
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    new_user = User(username=username, password=hashed_password.decode('utf-8'), path=username)
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({"success": f"User {username} created successfully!, {password},{hashed_password}"}), 201
 
 @main.route('/login', methods=['POST'])
 def login():
