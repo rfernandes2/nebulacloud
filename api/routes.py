@@ -51,7 +51,7 @@ def verify_token():
 
     return jsonify(response), status_code
 
-@main.route("/list", methods=["GET"])
+@main.route("/list", methods=["POST"])
 @jwt_required()
 def list_dir():
     current_user = get_jwt_identity()
@@ -99,3 +99,22 @@ def delete_item():
 def get_users():
     users = User.query.all()  # Query all users from the database
     return {"users": [{"id": u.id, "username": u.username} for u in users]}
+
+@main.route("/upload", methods=["POST"])
+@jwt_required()
+def upload_files():
+    current_user = get_jwt_identity()
+    data = request.form  # Form data, as file is uploaded via form
+
+    path = data.get('path', None)
+    files = request.files.getlist('file')  # Get multiple files from the request
+
+    if not files:
+        return jsonify({"error": "No files provided"}), 400
+
+    if not path:
+        return jsonify({"error": "No path provided"}), 400
+
+    # Create the ListSerializers instance and upload the files
+    list_serializer = ListSerializers(current_user, path)
+    return list_serializer.upload_files(files)

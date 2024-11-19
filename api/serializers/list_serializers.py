@@ -1,6 +1,7 @@
 from api.settings import default_path, path_regex
 import os, re, shutil
 from flask import jsonify
+from werkzeug.utils import secure_filename
 
 # Shutil - copying, moving, deleting, and archiving files and directories
 
@@ -94,3 +95,31 @@ class ListSerializers:
             return jsonify({"error": "Permission denied. Unable to delete."}), 403
         except Exception as e:
             return jsonify({"error": str(e)}), 500
+
+    def upload_files(self, files):
+        # Validate the path
+        error, is_valid = self.validate_path()
+        if not is_valid:
+            return jsonify(error), 400
+
+        # Ensure the directory exists
+        if not os.path.exists(self.user_dir):
+            os.makedirs(self.user_dir)
+
+        # Initialize a list to store upload results
+        upload_results = []
+
+        for file in files:
+            # Get the filename and ensure it's safe
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(self.user_dir, filename)
+
+            # Save the file
+            try:
+                file.save(file_path)
+                upload_results.append({"message": f"File '{filename}' uploaded successfully to {self.user_dir}."})
+            except Exception as e:
+                upload_results.append({"error": f"Failed to upload file '{filename}': {str(e)}"})
+
+        # Return the result of all uploads
+        return jsonify(upload_results), 201
