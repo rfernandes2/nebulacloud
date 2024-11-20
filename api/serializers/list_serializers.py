@@ -1,6 +1,6 @@
 from api.settings import default_path, path_regex
 import os, re, shutil
-from flask import jsonify
+from flask import jsonify, send_file
 from werkzeug.utils import secure_filename
 
 # Shutil - copying, moving, deleting, and archiving files and directories
@@ -123,3 +123,18 @@ class ListSerializers:
 
         # Return the result of all uploads
         return jsonify(upload_results), 201
+
+    def download_file(self):
+        error, is_valid = self.validate_path()
+        if not is_valid:
+            return jsonify(error), 400
+        
+        file_path = os.path.join(self.user_dir)
+
+        if not os.path.isfile(file_path):
+            return jsonify({'error': 'The specified file does not exist'}), 404
+        
+        try:
+            return send_file(file_path, as_attachment = True)
+        except Exception as e:
+            return jsonify({'error': 'Failed to download file: {str(e)}'}), 500

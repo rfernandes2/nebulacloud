@@ -118,3 +118,15 @@ def upload_files():
     # Create the ListSerializers instance and upload the files
     list_serializer = ListSerializers(current_user, path)
     return list_serializer.upload_files(files)
+
+@main.route('/download', methods=['GET'])
+@jwt_required()
+def download_file():
+    current_user = get_jwt_identity()
+    path = request.args.get('path')
+
+    if not path:
+        return jsonify({'error': 'No path provided'}), 400
+    
+    list_serializer = ListSerializers(current_user, path)
+    return list_serializer.download_file()
