@@ -130,3 +130,15 @@ def download_file():
     
     list_serializer = ListSerializers(current_user, path)
     return list_serializer.download_file()
+
+@main.route('/preview', methods=['GET'])
+@jwt_required()
+def preview_image():
+    current_user = get_jwt_identity()
+    image_path = request.args.get('path')
+
+    if not image_path:
+        return jsonify({'error': 'No path provided'}), 400
+    
+    list_serializer = ListSerializers(current_user, image_path)
+    return list_serializer.preview_image()

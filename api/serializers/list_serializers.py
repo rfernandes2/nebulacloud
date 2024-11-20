@@ -138,3 +138,24 @@ class ListSerializers:
             return send_file(file_path, as_attachment = True)
         except Exception as e:
             return jsonify({'error': 'Failed to download file: {str(e)}'}), 500
+        
+    def preview_image(self):
+        # Validate the path
+        error, is_valid = self.validate_path()
+        if not is_valid:
+            return jsonify(error), 400
+
+        file_path = os.path.join(self.user_dir)
+
+        # Check if the file exists and is an image
+        if not os.path.isfile(file_path):
+            return jsonify({'error': 'The specified file does not exist'}), 404
+
+        # Check if it's an image file (can add more types if needed)
+        if not file_path.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
+            return jsonify({'error': 'The file is not a valid image type'}), 400
+
+        try:
+            return send_file(file_path, mimetype='image/jpeg')  # You can set a different MIME type based on the image
+        except Exception as e:
+            return jsonify({'error': f'Failed to load the image: {str(e)}'}), 500
