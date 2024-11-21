@@ -1,6 +1,6 @@
-import bcrypt
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt_identity
 from datetime import timedelta
+import bcrypt
 from api.models import User
 
 class LoginSerializer:

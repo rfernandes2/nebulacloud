@@ -5,6 +5,7 @@ from api.serializers.login_serializers import LoginSerializer
 from api.serializers.verify_token_serializer import VerifyTokenSerializer
 from api.serializers.list_serializers import ListSerializers
 import bcrypt
+from datetime import timedelta
 
 # Create a blueprint for your routes
 main = Blueprint('main', __name__)
@@ -40,6 +41,18 @@ def login():
     response, status_code = login_serializer.validate()
 
     return jsonify(response), status_code
+
+@main.route("/extend-session", methods=["GET"])
+@jwt_required()  # Requires a valid JWT token
+def extend_session():
+    # Get the current user identity (username)
+    current_user = get_jwt_identity()
+
+    # Generate a new token with 60 minutes expiration
+    new_access_token = create_access_token(identity=current_user, expires_delta=timedelta(minutes=60))
+
+    # Return the new token
+    return jsonify(message="Session extended", access_token=new_access_token), 200
 
 @main.route("/verify_token", methods=["GET"])
 @jwt_required()

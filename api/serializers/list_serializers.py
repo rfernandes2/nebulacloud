@@ -100,7 +100,7 @@ class ListSerializers:
         # Validate the path
         error, is_valid = self.validate_path()
         if not is_valid:
-            return jsonify(error), 400
+            return jsonify({"error": error}), 400
 
         # Ensure the directory exists
         if not os.path.exists(self.user_dir):
@@ -117,9 +117,15 @@ class ListSerializers:
             # Save the file
             try:
                 file.save(file_path)
-                upload_results.append({"message": f"File '{filename}' uploaded successfully to {self.user_dir}."})
+                upload_results.append({
+                    "filename": filename,
+                    "message": f"File '{filename}' uploaded successfully to {self.user_dir}."
+                })
             except Exception as e:
-                upload_results.append({"error": f"Failed to upload file '{filename}': {str(e)}"})
+                upload_results.append({
+                    "filename": filename,
+                    "error": f"Failed to upload file '{filename}': {str(e)}"
+                })
 
         # Return the result of all uploads
         return jsonify(upload_results), 201
