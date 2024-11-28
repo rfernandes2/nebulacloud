@@ -1,7 +1,0 @@
-# Ignorar arquivos de configuração do IntelliJ IDEA
-.idea/
-
-# Ignorar arquivos .pyc gerados pelo Python
-__pycache__/
-/api/serializers/__pycache__
-/api/__pycache__
