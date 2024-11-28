@@ -1,8 +1,8 @@
-# What is nebulacloud
-NebulaCloud is a front-end website that allows you to manage files and folders inside a primary folder of a user. 
+# What is NebulaCloud
+NebulaCloud is a website that allows you to manage files and folders inside a primary folder of a user. 
 You can delete, update, create folders and see photos with the front-end.
 
-This a good website for a person that has a disk home and wants to use a personal NAS with a website.
+This a good solution for a person that wants to use a personal NAS with a website.
 
 The front-end is on another repository: https://github.com/j38moreira/nebulacloud-frontend
 
