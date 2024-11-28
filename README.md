@@ -7,7 +7,8 @@ This is an excellent solution for individuals with a home disk who want to use a
 The front-end is in another repository: https://github.com/j38moreira/nebulacloud-frontend
 
 ```
-You can also find a script here to create users in the database. The website uses a token-based authentication system.
+You can also find a script here to create users in the database. 
+The website uses a token-based authentication system.
 ```
 
 # Important notes:
